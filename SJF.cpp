@@ -27,7 +27,7 @@ void inputProcess(int n, PCB P[]) {
 void printProcess(int n, PCB P[]) {
     printf("PID\tArrival\tBurst\tStart\tFinish\tWaiting\tResponse\tTaT\n");
     for (int i = 0; i < n; i++) {
-        printf("%d\t%d\t%d\t%d\t%d\t%d\t%d\t\t%d\n", P[i].iPID, P[i].iArrival, P[i].iBurst, 
+        printf("%d\t%d\t%d\t%d\t%d\t%d\t%d\t\t%d\n", P[i].iPID, P[i].iArrival, P[i].iBurst,
                P[i].iStart, P[i].iFinish, P[i].iWaiting, P[i].iResponse, P[i].iTaT);
     }
 }
@@ -72,7 +72,7 @@ int partition(PCB P[], int low, int high, int iCriteria) {
         if (iCriteria == SORT_BY_ARRIVAL) shouldSwap = (P[j].iArrival < pivot.iArrival);
         else if (iCriteria == SORT_BY_PID) shouldSwap = (P[j].iPID < pivot.iPID);
         else if (iCriteria == SORT_BY_BURST) shouldSwap = (P[j].iBurst < pivot.iBurst);
-        
+
         if (shouldSwap) {
             i++;
             swapProcess(&P[i], &P[j]);
@@ -117,16 +117,16 @@ int main() {
     int iRemain = iNumberOfProcess, iReady = 0, iTerminated = 0;
     inputProcess(iNumberOfProcess, Input);
     quickSort(Input, 0, iNumberOfProcess - 1, SORT_BY_ARRIVAL);
-    
+
     pushProcess(&iReady, ReadyQueue, Input[0]);
     removeProcess(&iRemain, 0, Input);
-    
+
     ReadyQueue[0].iStart = ReadyQueue[0].iArrival;
     ReadyQueue[0].iFinish = ReadyQueue[0].iStart + ReadyQueue[0].iBurst;
     ReadyQueue[0].iResponse = ReadyQueue[0].iStart - ReadyQueue[0].iArrival;
     ReadyQueue[0].iWaiting = ReadyQueue[0].iResponse;
     ReadyQueue[0].iTaT = ReadyQueue[0].iFinish - ReadyQueue[0].iArrival;
-    
+
     printf("\nReady Queue: ");
     printProcess(1, ReadyQueue);
 
@@ -136,17 +136,17 @@ int main() {
             pushProcess(&iReady, ReadyQueue, Input[0]);
             removeProcess(&iRemain, 0, Input);
         }
-        
+
         // Sắp xếp ReadyQueue theo thời gian Burst để chọn tiến trình ngắn nhất
         if (iReady > 1) {
-            quickSort(ReadyQueue, 0, iReady - 1, SORT_BY_BURST);
+           // quickSort(ReadyQueue, 0, iReady - 1, SORT_BY_BURST);
         }
 
         // Đưa tiến trình đầu tiên trong ReadyQueue vào TerminatedArray
         if (iReady > 0) {
             pushProcess(&iTerminated, TerminatedArray, ReadyQueue[0]);
             removeProcess(&iReady, 0, ReadyQueue);
-
+            quickSort(ReadyQueue, 0, iReady - 1, SORT_BY_BURST);
             if (iReady > 0) {
                 ReadyQueue[0].iStart = TerminatedArray[iTerminated - 1].iFinish;
                 ReadyQueue[0].iFinish = ReadyQueue[0].iStart + ReadyQueue[0].iBurst;
